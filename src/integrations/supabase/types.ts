@@ -14,16 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      redirect_clicks: {
+        Row: {
+          clicked_at: string
+          device: string
+          id: number
+          redirect_id: string
+          referrer_host: string | null
+        }
+        Insert: {
+          clicked_at?: string
+          device?: string
+          id?: number
+          redirect_id: string
+          referrer_host?: string | null
+        }
+        Update: {
+          clicked_at?: string
+          device?: string
+          id?: number
+          redirect_id?: string
+          referrer_host?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "redirect_clicks_redirect_id_fkey"
+            columns: ["redirect_id"]
+            isOneToOne: false
+            referencedRelation: "redirects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      redirects: {
+        Row: {
+          client_name: string
+          created_at: string
+          destination_url: string
+          id: string
+          is_active: boolean
+          is_demo: boolean
+          notes: string | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          client_name: string
+          created_at?: string
+          destination_url: string
+          id?: string
+          is_active?: boolean
+          is_demo?: boolean
+          notes?: string | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          client_name?: string
+          created_at?: string
+          destination_url?: string
+          id?: string
+          is_active?: boolean
+          is_demo?: boolean
+          notes?: string | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      resolve_redirect: {
+        Args: { _device: string; _referrer_host: string; _slug: string }
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +245,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
