@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 function baseUrl() {
-  const env = import.meta.env.VITE_PUBLIC_BASE_URL as string | undefined;
+  const env = import.meta.env['VITE_PUBLIC_BASE_URL'] as string | undefined;
   return env && /^https?:\/\//.test(env) ? env : window.location.origin;
 }
 
@@ -346,19 +346,19 @@ function EditDialog({ initial, onClose }: { initial: Redirect | null; onClose: (
           </DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <Field label="Client / business name" error={errors.client_name}>
+          <Field label="Client / business name" error={errors['client_name']}>
             <Input value={form.client_name} maxLength={200} onChange={(e) => {
               const client_name = e.target.value;
               setForm((f) => ({ ...f, client_name, slug: slugTouched ? f.slug : slugify(client_name) }));
             }} />
           </Field>
-          <Field label="Slug (permanent)" error={errors.slug} hint={`${baseUrl()}/r/${form.slug || "your-slug"}`}>
+          <Field label="Slug (permanent)" error={errors['slug']} hint={`${baseUrl()}/r/${form.slug || "your-slug"}`}>
             <Input value={form.slug} disabled={!!initial} className="font-mono" maxLength={64} onChange={(e) => { setSlugTouched(true); setForm((f) => ({ ...f, slug: e.target.value.toLowerCase() })); }} />
           </Field>
-          <Field label="Destination URL" error={errors.destination_url} hint="Paste any http(s) link, e.g. a Google Review URL.">
+          <Field label="Destination URL" error={errors['destination_url']} hint="Paste any http(s) link, e.g. a Google Review URL.">
             <Input type="url" value={form.destination_url} placeholder="https://" onChange={(e) => setForm((f) => ({ ...f, destination_url: e.target.value }))} />
           </Field>
-          <Field label="Notes" error={errors.notes}>
+          <Field label="Notes" error={errors['notes']}>
             <Textarea value={form.notes} maxLength={2000} rows={3} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} />
           </Field>
           <DialogFooter>
@@ -371,7 +371,7 @@ function EditDialog({ initial, onClose }: { initial: Redirect | null; onClose: (
   );
 }
 
-function Field({ label, error, hint, children }: { label: string; error?: string; hint?: string; children: React.ReactNode }) {
+function Field({ label, error, hint, children }: { label: string; error?: string | undefined; hint?: string | undefined; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
       <Label>{label}</Label>
