@@ -18,8 +18,15 @@ export const Route = createFileRoute("/r/$slug")({
         const slug = String(params.slug || "").toLowerCase();
         if (!SLUG_RE.test(slug)) return notFoundPage(slug);
 
-        const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-        const supabase = createClient<Database>(process.env["SUPABASE_URL"]!, key, {
+        // Hosts other than Lovable (e.g. Netlify) don't inject server env vars, so fall back
+        // to the public build-time values (publishable key is safe to expose).
+        const url = process.env["SUPABASE_URL"] || import.meta.env.VITE_SUPABASE_URL;
+        const key = process.env["SUPABASE_PUBLISHABLE_KEY"] || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+        if (!url || !key) {
+          console.error("Redirect backend config missing");
+          return new Response("Temporarily unavailable", { status: 503, headers: { "cache-control": "no-store" } });
+        }
+        const supabase = createClient<Database>(url, key, {
           auth: { persistSession: false, autoRefreshToken: false },
           global: {
             fetch: (input, init) => {
