@@ -20,8 +20,8 @@ export const Route = createFileRoute("/r/$slug")({
 
         // Hosts other than Lovable (e.g. Netlify) don't inject server env vars, so fall back
         // to the public build-time values (publishable key is safe to expose).
-        const url = process.env["SUPABASE_URL"] || import.meta.env.VITE_SUPABASE_URL;
-        const key = process.env["SUPABASE_PUBLISHABLE_KEY"] || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+        const url = process.env["SUPABASE_URL"] || import.meta.env["VITE_SUPABASE_URL"];
+        const key = process.env["SUPABASE_PUBLISHABLE_KEY"] || import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
         if (!url || !key) {
           console.error("Redirect backend config missing");
           return new Response("Temporarily unavailable", { status: 503, headers: { "cache-control": "no-store" } });
